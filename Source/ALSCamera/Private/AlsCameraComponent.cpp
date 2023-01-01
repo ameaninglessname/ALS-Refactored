@@ -126,7 +126,7 @@ void UAlsCameraComponent::TickCamera(const float DeltaTime, const bool bAllowLag
 
 	// Calculate camera rotation.
 
-	const auto CameraTargetRotation{Character->GetViewRotation()};
+	const auto CameraTargetRotation{GetCameraTargetRotation()};
 
 	const auto PivotTargetTransform{GetThirdPersonPivotTransform()};
 
@@ -189,7 +189,7 @@ void UAlsCameraComponent::TickCamera(const float DeltaTime, const bool bAllowLag
 
 	// Calculate target camera location.
 
-	const auto CameraTargetLocation{PivotLocation + CalculateCameraOffset()};
+	const auto CameraTargetLocation{GetCameraTargetLocation()};
 
 	// Trace for an object between the camera and character to apply a corrective offset.
 
@@ -205,6 +205,16 @@ void UAlsCameraComponent::TickCamera(const float DeltaTime, const bool bAllowLag
 		CameraLocation = FMath::Lerp(CameraResultLocation, GetFirstPersonCameraLocation(), FirstPersonOverride);
 		CameraFov = FMath::Lerp(Settings->ThirdPerson.Fov, Settings->FirstPerson.Fov, FirstPersonOverride);
 	}
+}
+
+FRotator UAlsCameraComponent::GetCameraTargetRotation() const
+{
+	return Character->GetViewRotation();
+}
+
+FVector UAlsCameraComponent::GetCameraTargetLocation() const
+{
+	return PivotLocation + CalculateCameraOffset();
 }
 
 FRotator UAlsCameraComponent::CalculateCameraRotation(const FRotator& CameraTargetRotation,
