@@ -142,12 +142,12 @@ bool AAlsCharacter::StartMantling()
 {
 	if (LocomotionMode == AlsLocomotionModeTags::Grounded)
 	{
-		return StartMantling(Settings->Mantling.GroundedTrace);
+		return StartMantling(Settings->Mantling.GroundedTrace, CalculateForwardTraceDeltaAngle());
 	}
 
 	if (LocomotionMode == AlsLocomotionModeTags::InAir)
 	{
-		return StartMantling(Settings->Mantling.InAirTrace);
+		return StartMantling(Settings->Mantling.InAirTrace, CalculateForwardTraceDeltaAngle());
 	}
 
 	return false;
@@ -156,7 +156,7 @@ bool AAlsCharacter::StartMantling()
 bool AAlsCharacter::AutoStartMantling()
 {
 	return Settings->Mantling.bAutoStartMantlingInAir && LocomotionMode == AlsLocomotionModeTags::InAir &&
-	       IsLocallyControlled() && StartMantling(Settings->Mantling.InAirTrace);
+	       IsLocallyControlled() && StartMantling(Settings->Mantling.InAirTrace, CalculateForwardTraceDeltaAngle());
 }
 
 bool AAlsCharacter::IsMantlingAllowedToStart_Implementation() const
@@ -164,36 +164,19 @@ bool AAlsCharacter::IsMantlingAllowedToStart_Implementation() const
 	return !LocomotionAction.IsValid();
 }
 
-bool AAlsCharacter::StartMantling(const FAlsMantlingTraceSettings& TraceSettings)
+bool AAlsCharacter::StartMantling(const FAlsMantlingTraceSettings& TraceSettings, const float ForwardTraceDeltaAngle)
 {
 	if (!Settings->Mantling.bAllowMantling || GetLocalRole() <= ROLE_SimulatedProxy || !IsMantlingAllowedToStart())
 	{
 		return false;
 	}
 
-	const auto ActorLocation{GetActorLocation()};
-	const auto ActorYawAngle{UE_REAL_TO_FLOAT(FMath::UnwindDegrees(GetActorRotation().Yaw))};
-
-	float ForwardTraceAngle;
-	if (LocomotionState.bHasVelocity)
-	{
-		ForwardTraceAngle = LocomotionState.bHasInput
-			                    ? LocomotionState.VelocityYawAngle +
-			                      FMath::ClampAngle(LocomotionState.InputYawAngle - LocomotionState.VelocityYawAngle,
-			                                        -Settings->Mantling.MaxReachAngle, Settings->Mantling.MaxReachAngle)
-			                    : LocomotionState.VelocityYawAngle;
-	}
-	else
-	{
-		ForwardTraceAngle = LocomotionState.bHasInput ? LocomotionState.InputYawAngle : ActorYawAngle;
-	}
-
-	const auto ForwardTraceDeltaAngle{FMath::UnwindDegrees(ForwardTraceAngle - ActorYawAngle)};
 	if (FMath::Abs(ForwardTraceDeltaAngle) > Settings->Mantling.TraceAngleThreshold)
 	{
 		return false;
 	}
 
+	const auto ActorYawAngle{UE_REAL_TO_FLOAT(FRotator::NormalizeAxis(GetActorRotation().Yaw))};
 	const auto ForwardTraceDirection{
 		UAlsVector::AngleToDirectionXY(
 			ActorYawAngle + FMath::ClampAngle(ForwardTraceDeltaAngle, -Settings->Mantling.MaxReachAngle, Settings->Mantling.MaxReachAngle))
@@ -209,6 +192,7 @@ bool AAlsCharacter::StartMantling(const FAlsMantlingTraceSettings& TraceSettings
 	const auto CapsuleRadius{Capsule->GetScaledCapsuleRadius()};
 	const auto CapsuleHalfHeight{Capsule->GetScaledCapsuleHalfHeight()};
 
+	const auto ActorLocation{GetActorLocation()};
 	const FVector CapsuleBottomLocation{ActorLocation.X, ActorLocation.Y, ActorLocation.Z - CapsuleHalfHeight};
 
 	const auto TraceCapsuleRadius{CapsuleRadius - 1.0f};
@@ -640,6 +624,27 @@ float AAlsCharacter::CalculateMantlingStartTime(const UAlsMantlingSettings* Mant
 }
 
 void AAlsCharacter::OnMantlingStarted_Implementation(const FAlsMantlingParameters& Parameters) {}
+
+float AAlsCharacter::CalculateForwardTraceDeltaAngle() const
+{
+	const auto ActorYawAngle{UE_REAL_TO_FLOAT(FMath::UnwindDegrees(GetActorRotation().Yaw))};
+
+	float ForwardTraceAngle;
+	if (LocomotionState.bHasVelocity)
+	{
+		ForwardTraceAngle = LocomotionState.bHasInput
+								? LocomotionState.VelocityYawAngle +
+								  FMath::ClampAngle(LocomotionState.InputYawAngle - LocomotionState.VelocityYawAngle,
+													-Settings->Mantling.MaxReachAngle, Settings->Mantling.MaxReachAngle)
+								: LocomotionState.VelocityYawAngle;
+	}
+	else
+	{
+		ForwardTraceAngle = LocomotionState.bHasInput ? LocomotionState.InputYawAngle : ActorYawAngle;
+	}
+
+	return FMath::UnwindDegrees(ForwardTraceAngle - ActorYawAngle);
+}
 
 void AAlsCharacter::RefreshMantling()
 {
