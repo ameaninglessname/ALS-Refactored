@@ -492,6 +492,14 @@ void AAlsCharacter::OnMovementModeChanged(const EMovementMode PreviousMovementMo
 			SetLocomotionMode(AlsLocomotionModeTags::InAir);
 			break;
 
+		case MOVE_Custom:
+			if (GetCharacterMovement()->CustomMovementMode != 0)
+			{
+				// CustomMovementMode should be handled elsewhere
+				break;
+			}
+			// else : CustomMovementMode is 0, fall into default case
+
 		default:
 			SetLocomotionMode(FGameplayTag::EmptyTag);
 			break;
