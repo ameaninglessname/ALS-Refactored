@@ -744,34 +744,39 @@ void AAlsCharacter::RefreshRotationMode()
 		return;
 	}
 
-	// Grounded and other locomotion modes.
+	// Grounded.
 
-	if (bSprinting)
+	if (LocomotionMode == AlsLocomotionModeTags::Grounded)
 	{
-		if (bAiming && !Settings->bSprintHasPriorityOverAiming)
+		if (bSprinting)
 		{
-			SetRotationMode(AlsRotationModeTags::Aiming);
+			if (bAiming && !Settings->bSprintHasPriorityOverAiming)
+			{
+				SetRotationMode(AlsRotationModeTags::Aiming);
+			}
+			else if (Settings->bRotateToVelocityWhenSprinting)
+			{
+				SetRotationMode(AlsRotationModeTags::VelocityDirection);
+			}
+			else
+			{
+				SetRotationMode(DesiredRotationMode);
+			}
 		}
-		else if (Settings->bRotateToVelocityWhenSprinting)
+		else // Not sprinting.
 		{
-			SetRotationMode(AlsRotationModeTags::VelocityDirection);
-		}
-		else
-		{
-			SetRotationMode(DesiredRotationMode);
+			if (bAiming)
+			{
+				SetRotationMode(AlsRotationModeTags::Aiming);
+			}
+			else
+			{
+				SetRotationMode(DesiredRotationMode);
+			}
 		}
 	}
-	else // Not sprinting.
-	{
-		if (bAiming)
-		{
-			SetRotationMode(AlsRotationModeTags::Aiming);
-		}
-		else
-		{
-			SetRotationMode(DesiredRotationMode);
-		}
-	}
+
+	// Other locomotion modes.
 }
 
 void AAlsCharacter::SetDesiredStance(const FGameplayTag& NewDesiredStance)
