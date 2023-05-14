@@ -596,7 +596,9 @@ void UAlsCharacterMovementComponent::PhysNavWalking(const float DeltaTime, const
 
 void UAlsCharacterMovementComponent::PhysCustom(const float DeltaTime, int32 IterationsCount)
 {
-	if (DeltaTime < MIN_TICK_TIME)
+	if (const auto* Character{Cast<AAlsCharacter>(CharacterOwner)};
+		DeltaTime < MIN_TICK_TIME
+		|| Character && Character->GetLocomotionAction() != AlsLocomotionActionTags::Mantling)
 	{
 		Super::PhysCustom(DeltaTime, IterationsCount);
 		return;
