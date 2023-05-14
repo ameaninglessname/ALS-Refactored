@@ -502,11 +502,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "ALS|Character", Meta = (ReturnDisplayName = "Success"))
 	bool StartMantlingGrounded();
 
-private:
 	bool StartMantlingInAir();
 
-	bool StartMantling(const FAlsMantlingTraceSettings& TraceSettings);
+	bool StartMantling(const FAlsMantlingTraceSettings& TraceSettings, float ForwardTraceDeltaAngle);
 
+private:
 	UFUNCTION(Server, Reliable)
 	void ServerStartMantling(const FAlsMantlingParameters& Parameters);
 
@@ -525,6 +525,8 @@ protected:
 	void OnMantlingStarted(const FAlsMantlingParameters& Parameters);
 
 private:
+	float CalculateForwardTraceDeltaAngle() const;
+	
 	void RefreshMantling();
 
 	void StopMantling(bool bStopMontage = false);
