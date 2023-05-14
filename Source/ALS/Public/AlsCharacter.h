@@ -359,10 +359,13 @@ protected:
 public:
 	const FVector& GetInputDirection() const;
 
-protected:
 	void SetInputDirection(FVector NewInputDirection);
 
+protected:
 	virtual void RefreshInput(float DeltaTime);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetInputDirection(const FVector& NewInputDirection);
 
 	// View
 
