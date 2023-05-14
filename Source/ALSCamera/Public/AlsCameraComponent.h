@@ -126,9 +126,12 @@ public:
 	UFUNCTION(BlueprintPure, Category = "ALS|Camera")
 	void GetViewInfo(FMinimalViewInfo& ViewInfo) const;
 
-private:
-	void TickCamera(float DeltaTime, bool bAllowLag = true);
+protected:
+	virtual void TickCamera(float DeltaTime, bool bAllowLag = true);
+	virtual FRotator GetCameraTargetRotation() const;
+	virtual FVector GetCameraTargetLocation() const;
 
+private:
 	FRotator CalculateCameraRotation(const FRotator& CameraTargetRotation, float DeltaTime, bool bAllowLag) const;
 
 	FVector CalculatePivotLagLocation(const FQuat& CameraYawRotation, float DeltaTime, bool bAllowLag) const;
