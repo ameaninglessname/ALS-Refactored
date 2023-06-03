@@ -176,9 +176,9 @@ public:
 public:
 	FGameplayTag GetLocomotionMode() const;
 
-protected:
 	void SetLocomotionMode(FGameplayTag NewLocomotionMode);
 
+protected:
 	virtual void NotifyLocomotionModeChanged(FGameplayTag PreviousLocomotionMode);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "Als Character")
