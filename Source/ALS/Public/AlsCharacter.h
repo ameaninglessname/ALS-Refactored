@@ -46,7 +46,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Als Character|Desired State", Replicated)
 	FGameplayTag DesiredGait{AlsGaitTags::Running};
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Als Character|Desired State", Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Als Character|Desired State",
+		ReplicatedUsing = "OnReplicated_ViewMode")
 	FGameplayTag ViewMode{AlsViewModeTags::ThirdPerson};
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Settings|Als Character|Desired State",
@@ -170,6 +171,13 @@ private:
 	UFUNCTION(Server, Reliable)
 	void ServerSetViewMode(const FGameplayTag& NewViewMode);
 
+	UFUNCTION()
+	void OnReplicated_ViewMode(const FGameplayTag& PreviousViewMode);
+
+protected:
+	UFUNCTION(BlueprintNativeEvent, Category = "Als Character")
+	void OnViewModeChanged(const FGameplayTag& PreviousViewMode);
+	
 	// Locomotion Mode
 
 public:
