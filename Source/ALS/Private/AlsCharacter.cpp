@@ -439,10 +439,14 @@ void AAlsCharacter::SetViewMode(const FGameplayTag NewViewMode, const bool bSend
 		return;
 	}
 
+	const auto PreviousViewMode{OverlayMode};
+	
 	ViewMode = NewViewMode;
 
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, ViewMode, this)
 
+	OnViewModeChanged(PreviousViewMode);
+	
 	if (bSendRpc)
 	{
 		if (GetLocalRole() >= ROLE_Authority)
@@ -465,6 +469,13 @@ void AAlsCharacter::ServerSetViewMode_Implementation(const FGameplayTag NewViewM
 {
 	SetViewMode(NewViewMode, false);
 }
+
+void AAlsCharacter::OnReplicated_ViewMode(const FGameplayTag& PreviousViewMode)
+{
+	OnViewModeChanged(PreviousViewMode);
+}
+
+void AAlsCharacter::OnViewModeChanged_Implementation(const FGameplayTag& PreviousViewMode) {}
 
 void AAlsCharacter::OnMovementModeChanged(const EMovementMode PreviousMovementMode, const uint8 PreviousCustomMode)
 {
