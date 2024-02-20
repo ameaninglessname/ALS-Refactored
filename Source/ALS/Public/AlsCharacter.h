@@ -378,7 +378,12 @@ protected:
 
 public:
 	virtual FRotator GetViewRotation() const override;
+	
+protected:
+	virtual FRotator GetViewRotator() const;
 
+	virtual bool ShouldSendViewRotationRpc() const;
+	
 private:
 	void SetReplicatedViewRotation(const FRotator& NewViewRotation, bool bSendRpc);
 
