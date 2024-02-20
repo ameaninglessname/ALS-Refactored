@@ -1143,6 +1143,16 @@ FRotator AAlsCharacter::GetViewRotation() const
 	return ViewState.Rotation;
 }
 
+FRotator AAlsCharacter::GetViewRotator() const
+{
+	return Super::GetViewRotation();
+}
+
+bool AAlsCharacter::ShouldSendViewRotationRpc() const
+{
+	return !IsReplicatingMovement();
+}
+
 void AAlsCharacter::SetInputDirection(FVector NewInputDirection)
 {
 	NewInputDirection = NewInputDirection.GetSafeNormal();
@@ -1281,7 +1291,7 @@ void AAlsCharacter::RefreshView(const float DeltaTime)
 			// We can't depend on the view rotation sent by the character movement component
 			// since it's in world space, so in this case we always send it ourselves.
 
-			SetReplicatedViewRotation((MovementBase.Rotation.Inverse() * Super::GetViewRotation().Quaternion()).Rotator(), true);
+			SetReplicatedViewRotation((MovementBase.Rotation.Inverse() * GetViewRotator().Quaternion()).Rotator(), true);
 		}
 	}
 	else
@@ -1291,7 +1301,7 @@ void AAlsCharacter::RefreshView(const float DeltaTime)
 			// The character movement component already sends the view rotation to the
 			// server if movement is replicated, so we don't have to do this ourselves.
 
-			SetReplicatedViewRotation(Super::GetViewRotation().GetNormalized(), !IsReplicatingMovement());
+			SetReplicatedViewRotation(GetViewRotator().GetNormalized(), ShouldSendViewRotationRpc());
 		}
 	}
 
