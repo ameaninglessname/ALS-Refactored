@@ -436,7 +436,7 @@ void UAlsCharacterMovementComponent::PhysWalking(const float DeltaTime, int32 It
 				const float DesiredDist = UE_REAL_TO_FLOAT(Delta.Size());
 				if (DesiredDist > UE_KINDA_SMALL_NUMBER)
 				{
-					const float ActualDist = UE_REAL_TO_FLOAT((UpdatedComponent->GetComponentLocation() - OldLocation).Size2D());
+					const float ActualDist = ProjectToGravityFloor(UpdatedComponent->GetComponentLocation() - OldLocation).Size();
 					remainingTime += timeTick * (1.f - FMath::Min(1.f,ActualDist/DesiredDist));
 				}
 				StartNewPhysics(remainingTime,Iterations);
@@ -460,8 +460,7 @@ void UAlsCharacterMovementComponent::PhysWalking(const float DeltaTime, int32 It
 		if ( bCheckLedges && !CurrentFloor.IsWalkableFloor() )
 		{
 			// calculate possible alternate movement
-			const FVector GravDir = GetGravityDirection();
-			const FVector NewDelta = bTriedLedgeMove ? FVector::ZeroVector : GetLedgeMove(OldLocation, Delta, GravDir);
+			const FVector NewDelta = bTriedLedgeMove ? FVector::ZeroVector : GetLedgeMove(OldLocation, Delta, OldFloor);
 			if ( !NewDelta.IsZero() )
 			{
 				// first revert this move
@@ -473,6 +472,7 @@ void UAlsCharacterMovementComponent::PhysWalking(const float DeltaTime, int32 It
 				// Try new movement direction
 				Velocity = NewDelta/timeTick;
 				remainingTime += timeTick;
+				Iterations--;
 				continue;
 			}
 			else
@@ -528,7 +528,7 @@ void UAlsCharacterMovementComponent::PhysWalking(const float DeltaTime, int32 It
 				// The floor check failed because it started in penetration
 				// We do not want to try to move downward because the downward sweep failed, rather we'd like to try to pop out of the floor.
 				FHitResult Hit(CurrentFloor.HitResult);
-				Hit.TraceEnd = Hit.TraceStart + RotateGravityToWorld(FVector(0.f, 0.f, MAX_FLOOR_DIST));
+				Hit.TraceEnd = Hit.TraceStart + MAX_FLOOR_DIST * -GetGravityDirection();
 				const FVector RequestedAdjustment = GetPenetrationAdjustment(Hit);
 				ResolvePenetration(RequestedAdjustment, Hit, UpdatedComponent->GetComponentQuat());
 				bForceNextFloorCheck = true;
