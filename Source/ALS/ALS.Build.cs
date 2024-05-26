@@ -4,7 +4,6 @@ public class ALS : ModuleRules
 {
 	public ALS(ReadOnlyTargetRules target) : base(target)
 	{
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
 
 		// if (Target.bBuildEditor)
 		// {

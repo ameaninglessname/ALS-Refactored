@@ -4,8 +4,6 @@ public class ALSExtras : ModuleRules
 {
 	public ALSExtras(ReadOnlyTargetRules target) : base(target)
 	{
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_7;
-
 		// if (Target.bBuildEditor)
 		// {
 		// 	// Verify that all source files include all required dependencies.
