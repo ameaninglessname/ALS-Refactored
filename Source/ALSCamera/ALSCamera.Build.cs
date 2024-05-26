@@ -5,7 +5,6 @@ public class ALSCamera : ModuleRules
 	public ALSCamera(ReadOnlyTargetRules Target) : base(Target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
-		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
 
 		bEnableNonInlinedGenCppWarnings = true;
 		// UnsafeTypeCastWarningLevel = WarningLevel.Warning;
