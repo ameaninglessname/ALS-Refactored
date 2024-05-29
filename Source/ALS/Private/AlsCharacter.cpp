@@ -1158,7 +1158,6 @@ void AAlsCharacter::SetInputDirection(FVector NewInputDirection)
 
 void AAlsCharacter::RefreshInput(const float DeltaTime)
 {
-
 	LocomotionState.bHasInput = InputDirection.SizeSquared() > UE_KINDA_SMALL_NUMBER;
 
 	if (LocomotionState.bHasInput)
@@ -1167,7 +1166,7 @@ void AAlsCharacter::RefreshInput(const float DeltaTime)
 
 		const auto RotationYaw = UE_REAL_TO_FLOAT(GetViewState().Rotation.Yaw);
 		
-		LocomotionState.InputYawAngle = FRotator3f::NormalizeAxis(LocalInputAngle + RotationYaw);
+		LocomotionState.InputYawAngle = FRotator3f::NormalizeAxis(LocomotionState.InputYawAngle + RotationYaw);
 	}
 }
 
