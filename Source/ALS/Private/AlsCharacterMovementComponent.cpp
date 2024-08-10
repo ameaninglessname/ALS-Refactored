@@ -178,7 +178,7 @@ UAlsCharacterMovementComponent::UAlsCharacterMovementComponent()
 	bOrientRotationToMovement = false;
 
 	NavAgentProps.bCanCrouch = true;
-	bUseAccelerationForPaths = true;
+	NavMovementProperties.bUseAccelerationForPaths = true;
 }
 
 #if WITH_EDITOR
