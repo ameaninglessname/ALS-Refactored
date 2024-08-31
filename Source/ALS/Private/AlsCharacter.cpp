@@ -440,13 +440,13 @@ void AAlsCharacter::SetViewMode(const FGameplayTag NewViewMode, const bool bSend
 	}
 
 	const auto PreviousViewMode{OverlayMode};
-	
+
 	ViewMode = NewViewMode;
 
 	MARK_PROPERTY_DIRTY_FROM_NAME(ThisClass, ViewMode, this)
 
 	OnViewModeChanged(PreviousViewMode);
-	
+
 	if (bSendRpc)
 	{
 		if (GetLocalRole() >= ROLE_Authority)
@@ -1165,8 +1165,8 @@ void AAlsCharacter::RefreshInput(const float DeltaTime)
 		LocomotionState.InputYawAngle = UE_REAL_TO_FLOAT(UAlsVector::DirectionToAngleXY(InputDirection));
 
 		const auto RotationYaw = UE_REAL_TO_FLOAT(GetViewState().Rotation.Yaw);
-		
-		LocomotionState.InputYawAngle = FRotator3f::NormalizeAxis(LocomotionState.InputYawAngle + RotationYaw);
+
+		LocomotionState.InputYawAngle = FMath::UnwindDegrees(LocomotionState.InputYawAngle + RotationYaw);
 	}
 }
 
