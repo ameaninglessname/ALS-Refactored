@@ -175,7 +175,7 @@ private:
 protected:
 	UFUNCTION(BlueprintNativeEvent, Category = "Als Character")
 	void OnViewModeChanged(const FGameplayTag& PreviousViewMode);
-	
+
 	// Locomotion Mode
 
 public:
@@ -377,12 +377,12 @@ protected:
 
 public:
 	virtual FRotator GetViewRotation() const override;
-	
+
 protected:
 	virtual FRotator GetViewRotator() const;
 
 	virtual bool ShouldSendViewRotationRpc() const;
-	
+
 private:
 	void SetReplicatedViewRotation(const FRotator& NewViewRotation, bool bSendRpc);
 
@@ -471,8 +471,10 @@ protected:
 
 	void SetRotationExtraSmooth(float TargetYawAngle, float DeltaTime, float InterpolationHalfLife, float TargetYawAngleRotationSpeed);
 
+public:
 	void SetRotationInstant(float TargetYawAngle, ETeleportType Teleport = ETeleportType::None);
 
+protected:
 	void RefreshTargetYawAngleUsingActorRotation();
 
 	void SetTargetYawAngle(float TargetYawAngle);
@@ -543,7 +545,7 @@ protected:
 
 private:
 	float CalculateForwardTraceDeltaAngle() const;
-	
+
 	void RefreshMantling();
 
 	void StopMantling(bool bStopMontage = false);
