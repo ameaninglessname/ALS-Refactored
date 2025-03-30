@@ -475,8 +475,10 @@ protected:
 
 	void SetRotationExtraSmooth(float TargetYawAngle, float DeltaTime, float InterpolationHalfLife, float TargetYawAngleRotationSpeed);
 
+public:
 	void SetRotationInstant(float TargetYawAngle, ETeleportType Teleport = ETeleportType::None);
 
+protected:
 	void RefreshTargetYawAngleUsingActorRotation();
 
 	void SetTargetYawAngle(float TargetYawAngle);
