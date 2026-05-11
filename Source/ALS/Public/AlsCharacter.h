@@ -365,9 +365,9 @@ protected:
 public:
 	const FVector& GetInputDirection() const;
 
-protected:
 	void SetInputDirection(FVector NewInputDirection);
 
+protected:
 	virtual void RefreshInput(float DeltaTime);
 
 	// View
